@@ -1,0 +1,18 @@
+builder: dnf
+
+import:
+  - ../chromebook.yaml
+  - ../../../flagship/flagship-live.yaml
+  - ../../../flagship/base-disk-x86_64.yaml
+
+distro: Ultramarine Linux 41 Flagship (Chromebook Edition)
+
+out_file: ultramarine-cbe-flagship-41.img
+
+bootloader: grub
+
+kernel_cmdline: "quiet rhgb"
+
+dnf:
+  releasever: 41
+  exec: dnf4

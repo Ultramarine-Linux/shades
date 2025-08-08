@@ -1,0 +1,41 @@
+builder: dnf
+distro: Ultramarine Linux 42 (DE Shade)
+
+import:
+  - ../base/base.yaml
+  - ../base/base-disk.yaml
+  - ../base/desktop.yaml
+  - DE.yaml
+
+scripts:
+  post:
+    - id: grub
+      name: Set up GRUB
+      file: ../base/grub-setup.sh
+
+disk:
+  size: 14GB
+  partitions:
+    - label: EFI
+      type: esp
+      size: 512MB
+      filesystem: efi
+      mountpoint: /boot/efi
+
+    - label: boot
+      type: xbootldr
+      size: 1GB
+      filesystem: ext4
+      mountpoint: /boot
+
+    - label: root
+      flags:
+        - grow-fs
+      type: root
+      # size: 2.5MB
+      filesystem: ext4
+      mountpoint: /
+
+dnf:
+  releasever: 42
+  exec: dnf4

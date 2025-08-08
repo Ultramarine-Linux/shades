@@ -1,0 +1,31 @@
+builder: dnf
+
+dnf:
+  repodir: repodir/
+  releasever: 41
+  exec: dnf4
+  options:
+    - --setopt=cachedir=/var/cache/dnf
+    - --setopt=keepcache=True
+    - --setopt=tsflags=nodocs
+    - --setopt=max_parallel_downloads=20
+    - --setopt=install_weak_deps=True
+  exclude:
+    - fedora-release*
+    - generic-release*
+    - kernel*
+  packages:
+    # - uutils-coreutils-replace
+    - filesystem
+    - setup
+    - glibc
+    - glibc-common
+    - dnf
+    - git
+    # - mkpasswd # maybe not needed soon
+    - "@core"
+    - "@hardware-support"
+    - rpm
+    - libgomp
+    - ultramarine-release-identity-basic
+    - fedora-repos

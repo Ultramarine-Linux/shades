@@ -1,0 +1,10 @@
+dnf:
+  releasever: 41
+  exec: dnf4
+  exclude:
+    - ultramarine-backgrounds-compat
+    - "dnfdragora*"
+  packages:
+    -  #group for DE
+    - ultramarine-release #replace with custom release identity, see docs
+    - ultramarine-release-identity
