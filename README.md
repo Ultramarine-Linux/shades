@@ -8,11 +8,11 @@ Ultramarine Shades are community maintained versions of Ultramarine with user in
 
 We categorize Shades on how reliable they will be. Regardless of the level, all Shades are reviewed by the Fyra team for major bugs and security issues.
 
-### Higher Level
-Shades in the Higher level must have two ore more maintainers, and the interface must have a relatively certain future.
+### Choice
+Shades in the Choice category must have two ore more maintainers, and the interface must have a relatively certain future.
 
-## Lower Level
-All other Shades are in the lower level.
+### Sandbox
+All other Shades are in the Sandbox until they reach two or more maintainers.
 
 ## Editions V.S. Shades
 
