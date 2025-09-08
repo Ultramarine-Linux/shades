@@ -9,7 +9,7 @@ Ultramarine Shades are community maintained versions of Ultramarine with user in
 We categorize Shades on how reliable they will be. Regardless of the level, all Shades are reviewed by the Fyra team for major bugs and security issues.
 
 ### Choice
-Shades in the Choice category must have two ore more maintainers, and the interface must have a relatively certain future.
+Shades in the Choice category must have two or more maintainers, and the interface must have a relatively certain future.
 
 ### Sandbox
 All other Shades are in the Sandbox until they reach two or more maintainers.
