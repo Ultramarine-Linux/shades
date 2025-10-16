@@ -1,0 +1,2 @@
+# change this path to a custom theme in the future
+@theme "/usr/share/rofi/themes/Arc-Dark.rasi"

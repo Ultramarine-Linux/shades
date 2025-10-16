@@ -1,0 +1,194 @@
+* {
+    border: none;
+    font-family: "Inter", "Font Awesome 6 Free";
+    font-size: 16px;
+    min-height: 8px;
+}
+
+window#waybar {
+    background: transparent;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* Bubble style applied to each module */
+#network,
+#pulseaudio,
+#battery,
+#battery.charging,
+#battery.plugged,
+#battery.critical,
+#backlight,
+#temperature,
+#clock,
+#memory,
+#cpu,
+#tray,
+#custom-power,
+#custom-updates,
+#custom-media,
+#bluetooth {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 2px 6px;
+    margin: 0 2px;
+    color: rgba(255, 255, 255, 0.8);
+    box-shadow:
+        inset 6px 6px 10px rgba(255, 255, 255, 0.4),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* Hover effect */
+#network:hover,
+#pulseaudio:hover,
+#battery:hover,
+#battery.charging:hover,
+#battery.plugged:hover,
+#battery.critical:hover,
+#backlight:hover,
+#temperature:hover,
+#clock:hover,
+#memory:hover,
+#cpu:hover,
+#tray:hover,
+#custom-power:hover,
+#custom-updates:hover,
+#custom-media:hover,
+#bluetooth:hover,
+#workspaces:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+/* Battery state-specific text colors */
+#battery {
+    color: #ffffff;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: #77dd77;
+}
+
+#battery.critical:not(.charging) {
+    color: #f38ba8;
+    animation-name: blink;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        color: #ffffff;
+    }
+}
+
+/* Workspace and tag styling */
+#window {
+    margin-top: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
+    transition: none;
+    color: transparent;
+    background: transparent;
+}
+
+#tags {
+    margin-top: 0px;
+    margin-left: 12px;
+    font-size: 4px;
+    margin-bottom: 0px;
+    background: transparent;
+    transition: none;
+}
+
+#tags button {
+    transition: none;
+    color: #ffffff;
+    background: transparent;
+    font-size: 16px;
+    border-radius: 2px;
+}
+
+#tags button.occupied {
+    transition: none;
+    color: #ffffff;
+    background: transparent;
+    font-size: 4px;
+}
+
+#tags button.focused {
+    color: #ffffff;
+}
+
+#tags button:hover {
+    transition: none;
+    box-shadow: inherit;
+    text-shadow: inherit;
+    color: #e8a2af;
+    border-color: #e8a2af;
+}
+
+#tags button.focused:hover {
+    color: #45f000;
+}
+
+/* Unified bubbly container for all workspaces */
+#workspaces {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 2px 6px;
+    margin: 0 4px;
+    box-shadow:
+        inset 6px 6px 10px rgba(255, 255, 255, 0.4),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+        0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* Workspace buttons inside the bubble */
+#workspaces button {
+    background: transparent;
+    border: none;
+    padding: 0 8px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+#workspaces button.focused {
+    color: #ffffff;
+    /*font-weight: bold;*/
+}
+
+#workspaces button:hover {
+    color: transparent;
+    font-weight: bold;
+    /*text-shadow: 0 0 2px rgba(255, 255, 255, 1);  subtle glow */
+    box-shadow: none;
+}
+
+#workspaces button.urgent {
+    color: #ffffff;
+}
+
+/* Edge margin rules */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+}
