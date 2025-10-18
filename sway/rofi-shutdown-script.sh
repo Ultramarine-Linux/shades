@@ -1,6 +1,8 @@
-#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2025 Its-J
 #
-# This code is under the GPLv3 license
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+#!/usr/bin/env bash
 
 choice=$(printf " Logout\n Shutdown\n Reboot\n Suspend\n Cancel" | rofi -dmenu -l 5)
 elif [[ $choice == " Logout" ]];then

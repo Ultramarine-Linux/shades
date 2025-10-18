@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Ultramarine Linux Team
+#
+# SPDX-License-Identifier: MIT
+
 name: Push comps updates
 
 on:
