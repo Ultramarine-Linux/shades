@@ -28,4 +28,4 @@ Do not have any of the requirements Editions do.
 ## Licensing
 
 This repo contains files of various licensing origins. We use the [REUSE tool](https://reuse.software/) to make this easier to implement and interpret.
-Note, all code specifically written for this repository should be licensed as GPLv3 (GPL-3.0-or-later).
+Note: All code specifically written for this repository should be licensed as GPLv3 (GPL-3.0-or-later).
