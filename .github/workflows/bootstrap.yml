@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Ultramarine Linux Team
+#
+# SPDX-License-Identifier: MIT
+
 name: Bootstrap
 on:
   workflow_dispatch:

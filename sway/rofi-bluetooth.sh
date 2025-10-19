@@ -1,6 +1,8 @@
-#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2025 Nick Clyde (clydedroid)
 #
-# This code is under the GPLv3 license
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+#!/usr/bin/env bash
 
 # Constants
 divider="---------"

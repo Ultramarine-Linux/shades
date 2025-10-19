@@ -2,7 +2,7 @@
 
 ## What is a Shade?
 
-Ultramarine Shades are community maintained versions of Ultramarine with user interfaces that aren't already or can't be Editions. 
+Ultramarine Shades are community maintained versions of Ultramarine with user interfaces that aren't already or can't be Editions.
 
 ## Two Levels of Shades
 
@@ -18,9 +18,14 @@ All other Shades are in the Sandbox until they reach two or more maintainers.
 
 ### Editions Must
 - Have Wayland support or a reasonable plan to add Wayland support in the near future
-- Be well maintained with frequent bug fixes 
+- Be well maintained with frequent bug fixes
 - Be a full desktop environment
 
 ### Shades on the Other Hand
 
 Do not have any of the requirements Editions do.
+
+## Licensing
+
+This repo contains files of various licensing origins. We use the [REUSE tool](https://reuse.software/) to make this easier to implement and interpret.
+All code written for this repository specifically should be licensed as GPLv3 (GPL-3.0-or-later).
