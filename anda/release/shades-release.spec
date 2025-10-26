@@ -1,9 +1,9 @@
 %global is_rawhide 0
 
-%global release_name Heart of Gold
-%global fedora_codename Forty Two
-%global codename heart_of_gold
-%define dist_version 42
+%global release_name Gas Meter
+%global fedora_codename Forty Three
+%global codename gas_meter
+%define dist_version 43
 
 %if %{is_rawhide}
 %define bug_version rawhide

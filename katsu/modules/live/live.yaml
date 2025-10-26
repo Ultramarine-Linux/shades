@@ -4,8 +4,8 @@ scripts:
       name: Set up Live Image
       file: live.sh
 dnf:
-  releasever: 41
-  exec: dnf4
+  releasever: 43
+  exec: dnf
   exclude:
     - fedora-release*
     - generic-release*
