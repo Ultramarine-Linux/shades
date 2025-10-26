@@ -1,5 +1,5 @@
 builder: dnf
-distro: Ultramarine Linux 42 (DE Shade)
+distro: Ultramarine Linux 43 (DE Shade)
 
 import:
   - ../base/base.yaml
@@ -37,5 +37,5 @@ disk:
       mountpoint: /
 
 dnf:
-  releasever: 42
-  exec: dnf4
+  releasever: 43
+  exec: dnf

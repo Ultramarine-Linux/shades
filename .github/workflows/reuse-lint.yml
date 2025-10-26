@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: "ubuntu-latest"
     container:
-      image: docker.io/fedora:42
+      image: docker.io/fedora:43
     steps:
       - name: Install dependencies
         run: |

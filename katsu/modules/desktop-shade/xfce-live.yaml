@@ -7,9 +7,9 @@ import:
   - ../live/readymade.yaml
   - de-shade.yaml
 
-distro: Ultramarine Linux 42 (DE Shade)
+distro: Ultramarine Linux 43 (DE Shade)
 
-out_file: ultramarine-de-shade-42-live.iso
+out_file: ultramarine-de-shade-43-live.iso
 
 bootloader: grub
 
@@ -25,5 +25,5 @@ scripts:
       file: ./de-shade-live.sh
 
 dnf:
-  releasever: 42
-  exec: dnf4
+  releasever: 43
+  exec: dnf

@@ -2,8 +2,8 @@ builder: dnf
 
 dnf:
   repodir: repodir/
-  releasever: 41
-  exec: dnf4
+  releasever: 43
+  exec: dnf
   options:
     - --setopt=cachedir=/var/cache/dnf
     - --setopt=keepcache=True
