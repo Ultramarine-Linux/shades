@@ -1,9 +1,0 @@
-dnf:
-  releasever: 43
-  exec: dnf
-  packages:
-    - anaconda-dracut
-    - anaconda-live
-    - anaconda-install-env-deps
-    - "@anaconda-tools"
-    - python3-umstellar

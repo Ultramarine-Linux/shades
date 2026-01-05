@@ -1,0 +1,26 @@
+FROM ghcr.io/ultramarine-linux/desktop-bootc:latest
+
+RUN --mount=type=cache,target=/var/cache dnf do -y \
+    --no-best \
+    --allowerasing \
+    --action=remove \
+        ultramarine-release-identity-basic \
+        ptyxis \
+        anthy \
+        ibus-anthy \
+        virtualbox-guest-additions \
+        foot
+    --action=install \
+        ultramarine-release-identity-sway-shade \
+        @sway-desktop-environment \
+       @ultramarine-product-common \
+       @ultramarine-desktop-product-common \
+       sddm \
+       rofi-wayland \
+       ultramarine-backgrounds-compat \
+       wl-clipboard \
+       fontawesome-6-free-fonts \
+       fontawesome-6-brands-fonts \
+       rsms-inter-fonts \
+       ibus-setup \
+       pavucontrol
