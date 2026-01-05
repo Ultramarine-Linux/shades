@@ -1,0 +1,15 @@
+FROM ghcr.io/ultramarine-linux/desktop-bootc:latest
+
+RUN --mount=type=cache,target=/var/cache dnf do -y \
+    --no-best \
+    --allowerasing \
+    --action=remove \
+        ultramarine-release-identity-basic \
+        ptyxis \
+        anthy \
+        ibus-anthy \
+    --action=install \
+        ultramarine-release-identity-cinnamon-shade \
+        @cinnamon-desktop-environment \
+       @ultramarine-product-common \
+       @ultramarine-desktop-product-common \
