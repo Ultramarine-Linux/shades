@@ -1,0 +1,29 @@
+builder: dnf
+
+import:
+  - ../base/base.yaml
+  - ../live/live.yaml
+  # - ../base/desktop.yaml  # pulls in default flatpak support via the polygrystal package, not needed for Ultramarine Nothing
+  - ../live/readymade.yaml
+  - nothing.yaml
+
+distro: Ultramarine Nothing 43
+
+out_file: ultramarine-nothing-43-live.iso
+
+bootloader: grub
+
+kernel_cmdline: "quiet rhgb"
+
+iso:
+  volume_id: UM-Nth-Live
+
+scripts:
+  post:
+    - id: nothing-live
+      name: Set up Nothing Live
+      file: nothing-live.sh
+
+dnf:
+  releasever: 43
+  exec: dnf5
