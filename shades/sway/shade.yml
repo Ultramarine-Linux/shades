@@ -1,5 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Jaiden Riordan <jade@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 Name: Ultramarine Sway Shade
 Interface: Sway
 Type: TWM
 Stage: Shade
-Maintainers: Owen Zimmerman <owen@fyralabs.com>, J
+Maintainers: Owen Zimmerman <owen@fyralabs.com>, Its-J

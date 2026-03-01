@@ -1,3 +1,9 @@
+/*
+# SPDX-FileCopyrightText: 2025 Its-J
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
 {
   "layer": "top",
   "modules-left": [

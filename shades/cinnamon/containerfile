@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Jaiden Riordan <jade@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 FROM ghcr.io/ultramarine-linux/desktop-bootc:latest
 
 RUN --mount=type=cache,target=/var/cache dnf do -y \
