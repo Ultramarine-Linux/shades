@@ -1,4 +1,4 @@
-name: Build bootc images
+name: Automatically build bootc images
 permissions: write-all
 
 env:
@@ -7,17 +7,14 @@ env:
 on:
   push:
     paths:
-      # Update this when new tiers are added
-      - "base/**"
-      - "tier0/**"
-      - "tier1/**"
-      - "tier2/**"
-      - ".github/workflows/**"
+      - anda/**
+    branches:
+      - main
   pull_request:
-  schedule:
-    - cron: "0 1 * * TUE" # Every Tuesday at 1am UTC
-  merge_group:
+    branches:
+      - main
   workflow_dispatch:
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
