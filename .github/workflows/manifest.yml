@@ -1,0 +1,6 @@
+# Example manifest for a Katsu bootc build
+builder: bootc
+distro: Ultramarine Atomic Shades
+
+bootc:
+  image: "%BASE_IMAGE%"
