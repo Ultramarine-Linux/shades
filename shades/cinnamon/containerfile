@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Jaiden Riordan <jade@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM ghcr.io/ultramarine-linux/desktop-bootc:latest
+
+RUN --mount=type=cache,target=/var/cache dnf do -y \
+    --no-best \
+    --allowerasing \
+    --action=remove \
+        ultramarine-release-identity-basic \
+        ptyxis \
+        anthy \
+        ibus-anthy \
+    --action=install \
+        ultramarine-release-identity-cinnamon-shade \
+        @cinnamon-desktop-environment \
+       @ultramarine-product-common \
+       @ultramarine-desktop-product-common \

@@ -1,9 +1,9 @@
 %global is_rawhide 0
 
-%global release_name Gas Meter
-%global fedora_codename Forty Three
-%global codename gas_meter
-%define dist_version 43
+%global release_name Flying Fish
+%global fedora_codename Forty Four
+%global codename flyingfish
+%define dist_version 44
 
 %if %{is_rawhide}
 %define bug_version rawhide
