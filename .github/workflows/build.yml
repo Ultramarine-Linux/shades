@@ -1,0 +1,89 @@
+name: Build bootc images
+permissions: write-all
+
+env:
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+on:
+  push:
+    paths:
+      # Update this when new tiers are added
+      - "base/**"
+      - "tier0/**"
+      - "tier1/**"
+      - "tier2/**"
+      - ".github/workflows/**"
+  pull_request:
+  schedule:
+    - cron: "0 1 * * TUE" # Every Tuesday at 1am UTC
+  merge_group:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  # Normalize environment variables for use across jobs
+  normalize:
+    runs-on: ubuntu-latest
+    outputs:
+      registry: ${{ steps.normalize.outputs.registry }}
+      tag: ${{ steps.normalize.outputs.tag }}
+    steps:
+      - name: Normalize values
+        id: normalize
+        run: |
+          # Convert IMAGE_REGISTRY to lowercase
+          REGISTRY=$(echo ${{ env.IMAGE_REGISTRY }} | tr '[:upper:]' '[:lower:]')
+          echo "registry=${REGISTRY}" >> $GITHUB_OUTPUT
+          echo "Normalized registry: ${REGISTRY}"
+
+          # Convert ref name to lowercase and replace slashes with dashes
+          TAG=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Normalized tag: ${TAG}"
+
+  # Detect which paths changed to enable incremental builds
+  detect-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      base: ${{ steps.filter.outputs.base }}
+      tier0: ${{ steps.filter.outputs.tier0 }}
+      tier1: ${{ steps.filter.outputs.tier1 }}
+      tier2: ${{ steps.filter.outputs.tier2 }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            base:
+              - 'base/**'
+            tier0:
+              - 'tier0/**'
+            tier1:
+              - 'tier1/**'
+            tier2:
+              - 'tier2/**'
+            workflows:
+              - '.github/workflows/**'
+
+  build-base:
+    needs: [normalize, detect-changes]
+    # Build if base changed, or if workflows changed, or if scheduled/manual
+    if: |
+      needs.detect-changes.outputs.base == 'true' ||
+      needs.detect-changes.outputs.workflows == 'true' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-build-image.yml
+    secrets: inherit
+    with:
+      image-name: ultramarine
+      flavor: base
+      tag: ${{ needs.normalize.outputs.tag }}
+      skip-cache-from: ${{ github.event_name == 'schedule' }}
