@@ -6,7 +6,7 @@ Ultramarine Shades are community maintained spins of Ultramarine with user inter
 
 ## Existing Shades
 
-These are all Shades in the order they were created, for a prettier view go to LINK.
+These are all Shades in the order they were created.
 
 If a Shade is prefixed by a ★ it's maintained by Fyra staff, a Terra maintainer, or has had one year of successful releases.
 
@@ -16,7 +16,7 @@ Maintainers with an asterisk\* after their name are Fyra staff or a Terra mainta
 
 ### ★ Ultramarine Sway Shade
 
-**Maintained by**: Owen Zimmerman\* <owen@fyralabs.com> and J.
+**Maintained by**: Owen Zimmerman\* <owen@fyralabs.com> and Jonah\* <jonah@fyralabs.com>.
 
 ### Add Yours!
 
@@ -26,18 +26,29 @@ Start shadin'.
 
 We categorize Shades on how reliable the maintainers have been. Regardless, all Shades are reviewed by the Fyra team for major bugs and security issues.
 
-### Shades
-
-Regular ol' Shades are all well maintained and held to a level of quality. Shades are further distinguished with a star for the most reliable, they're either maintained by Fyra staff, a Terra maintainer, or have had one year of successful releases.
-
 ### Playground
 
 These are any images that aren't quite ready for the limelight, the maintainer may still be experimenting or has simply opted not to leave the Playground.
 
-## Requirements
+Shades can leave the Playground in 4 ways:
+- The Shade is functional and the Maintainer chooses to move to the regular Shade level
+- Maintainer chooses to end development of their Shade
+- Spun off into an independent distro (without the Ultramarine branding)
+- Spun off into Universal Blue or the Fedora Sandbox
+
+### Shades
+
+Regular ol' Shades are all well maintained and held to a level of quality. Shades are further distinguished with a star for the most reliable, they're either maintained by Fyra staff, a Terra maintainer, or have had one year of successful releases.
+
+
+## Requirements and Guidelines
 
 - Shades cannot be malicious (duh)
 - Shades are not personal custom images, and should not include apps that don’t serve a general usecase (don't make Omarchy)
+- Shades are generally focused around a unique user interface
+  - Shades can be focused around a particular feature or set of features, for example, a Nix Shade, or a Super-Optimized Shade.
+  - Shades focused around a user interface should try to remain close to the Editions, not adding features that aren't found by default in the Editions (i.e. Niri Shade adding Nix or a custom kernel)
+  - Hardware Enablement efforts should be brought upstream to the Anywhere Initiative rather than put in a Shade.
 
 ### Fyra Intervention
 
