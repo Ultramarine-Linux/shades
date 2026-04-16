@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2026 Jaiden Riordan <jade@fyralabs.com>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-[Identity]
-Name: Ultramarine Cinnamon Shade
-Maintainers: Jaiden Riordan <jade@fyralabs.com>
-Stage: Shade
+Identity:
+  Name: Ultramarine Cinnamon Shade
+  Maintainers: Jaiden Riordan <jade@fyralabs.com>
+  Stage: Shade
 
-[UI]
-Interface: Cinnamon
-Type: DE
+UI:
+  Interface: Cinnamon
+  Type: DE
