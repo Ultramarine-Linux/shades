@@ -9,11 +9,11 @@ RUN --mount=type=cache,target=/var/cache dnf do -y \
     --allowerasing \
     --action=remove \
         ultramarine-release-identity-basic \
-        ptyxis \
         anthy \
         ibus-anthy \
         virtualbox-guest-additions \
         foot
+# TODO: use kitty, switch sway defaults to kitty
     --action=install \
         ultramarine-release-identity-sway-shade \
         @sway-desktop-environment \
