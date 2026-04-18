@@ -3,7 +3,9 @@ permissions: write-all
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+        - main
+        - j/add-um-nothing
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *" # daily at 4am UTC
