@@ -10,6 +10,6 @@ RUN --mount=type=cache,target=/var/cache dnf do -y \
     --action=install \
     ultramarine-nothing-release-identity \
     # kwin required for taidan, might switch to systemd-firstboot or something in the futureyes
-    kwin \ 
-
+    kwin
+    
 LABEL readymade.prettyname="Ultramarine Nothing Shade"
