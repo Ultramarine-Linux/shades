@@ -1,0 +1,78 @@
+name: Build Ultramarine Nothing Shade ISO
+permissions: write-all
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *" # daily at 4am UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-iso:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+
+    runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+
+    container:
+      image: ghcr.io/fyralabs/katsu:main
+      options: --privileged --security-opt seccomp=unconfined -v /usr:/hostusr -v /:/hostfs
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clean up space before build
+        run: |
+          df -h
+          # Wipe stuff in our host /usr to make some space
+
+          # We don't need the android SDK
+          rm -rf /hostusr/local/lib/android
+          # We're a Rust shop, not a Haskell shop
+          rm -rf /hostusr/local/.ghcup
+          rm -rf /hostfs/opt/ghc
+          # We don't even use .NET
+          rm -rf /hostusr/share/dotnet
+          # We don't need CodeQL in this action
+          rm -rf /hostfs/opt/hostedtoolcache/CodeQL
+
+
+          echo "After cleanup:"
+          df -h
+      - name: Install dependencies
+        run: dnf install -y just podman
+
+      - name: Build bootc image (Nothing Shade)
+        run: |
+          set -x
+          podman build \
+            --device=/dev/fuse \
+            --cap-add=all \
+            --userns=host \
+            --cgroupns=host \
+            --layers=true \
+            --security-opt=label=disable \
+            -t ghcr.io/ultramarine-linux/nothing-bootc:main \
+            .
+
+      - name: Build ISO with Katsu
+        run: |
+          set -x
+          just image_tag=ghcr.io/ultramarine-linux/nothing-bootc:main katsu-live
+          mv iso out-${{ matrix.arch }}.iso
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ultramarine-nothing-${{ matrix.arch }}-${{ github.run_id }}
+          path: ./*.iso
+          archive: false
+          compression-level: 0
