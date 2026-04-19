@@ -13,7 +13,7 @@ jobs:
       packages: write
       id-token: write
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         arch: [x86_64, aarch64]
         variant:
@@ -29,11 +29,16 @@ jobs:
     env:
       # set build platform for OCI
       BUILD_PLATFORM: ${{ contains(matrix.arch, 'aarch64') && 'linux/arm64' || 'linux/amd64' }}
-      IMAGE_TAG: "${{ matrix.variant.image }}-${{ matrix.arch }}"
+      # IMAGE_TAG: "${{ matrix.variant.image }}-${{ matrix.arch }}"
       BUILD_CONTEXT: "shades/${{ matrix.variant.name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Sanitize image tag
+        run: |
+          IMAGE_TAG=$(echo "${{ matrix.variant.image }}-${{ matrix.arch }}" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
         # if: github.event_name != 'pull_request'
