@@ -2,10 +2,7 @@ name: Build Ultramarine Nothing Shade ISO
 permissions: write-all
 
 on:
-  push:
-    branches: 
-        - main
-        - j/add-um-nothing
+  pull_request:
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *" # daily at 4am UTC
