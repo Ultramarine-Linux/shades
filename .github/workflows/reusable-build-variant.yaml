@@ -44,8 +44,6 @@ jobs:
             latest=false
           tags: |
             type=ref,event=branch,suffix=-${{ matrix.arch }}
-            type=ref,event=tag,suffix=-${{ matrix.arch }}
-            type=sha,suffix=-${{ matrix.arch }}
           labels: |
             org.opencontainers.image.title=shades
           annotations: |
@@ -83,13 +81,8 @@ jobs:
 
       - name: Push to GHCR
         shell: bash
-        env:
-          METADATA_TAGS: ${{ steps.metadata.outputs.tags }}
         run: |
-          while IFS= read -r tag; do
-            [ -n "$tag" ] || continue
-            sudo podman push "$tag"
-          done < <(printf '%s\n' "$METADATA_TAGS")
+          sudo podman push "$IMAGE_TAG"
 
       - name: Get digest
         id: digest
@@ -167,11 +160,7 @@ jobs:
           sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$AMD64_IMAGE"
           sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$ARM64_IMAGE"
 
-          while IFS= read -r annotation; do
-            [ -n "$annotation" ] || continue
-            annotation=${annotation#manifest:}
-            #sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
-          done < <(printf '%s\n' "$METADATA_ANNOTATIONS")
+          :
 
           while IFS= read -r manifest_tag; do
             [ -n "$manifest_tag" ] || continue
