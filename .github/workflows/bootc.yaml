@@ -9,6 +9,9 @@ on:
   workflow_dispatch:
   push:
 
+env:
+  CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
+
 jobs:
   build:
     permissions:
@@ -59,19 +62,23 @@ jobs:
           sudo podman build \
             --platform "$BUILD_PLATFORM" \
             --layers=true \
+            --cache-to $CACHE_TAG \
+            --cache-from $CACHE_TAG \
             -f "${BUILD_CONTEXT}/Containerfile" \
             -t "$IMAGE_TAG" "$BUILD_CONTEXT"
 
-      - name: Get digest
-        run: |
-          DIGEST=$(sudo podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
-          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
       - name: Push to GHCR
         # if: github.event_name != 'pull_request'
         id: push
         run: |
           sudo podman push "$IMAGE_TAG"
+
+      - name: Get digest
+        id: digest
+        run: |
+          DIGEST=$(sudo podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
       - name: Upload matrix outputs
         uses: cloudposse/github-action-matrix-outputs-write@v1
@@ -80,9 +87,10 @@ jobs:
           matrix-step-name: ${{ github.job }}
           matrix-key: ${{ matrix.variant.name }}
           outputs: |-
-            digest: ${{ steps.push.outputs.digest }}
+            digest: ${{ steps.digest.outputs.digest }}
             image: ${{ env.IMAGE_TAG }}
             manifest: "${{ needs.manifest.outputs.manifest }}"
+
   manifest:
     runs-on: ubuntu-latest
     if: "!cancelled()"
