@@ -22,9 +22,9 @@ jobs:
           - name: nothing
             image: ghcr.io/ultramarine-linux/shade/nothing
           - name: cinnamon
-            image: ghcr.io/ultramarine-linux/shade/cinnamon:${{ github.ref_name || 'main' }}
+            image: ghcr.io/ultramarine-linux/shade/cinnamon
           - name: sway
-            image: ghcr.io/ultramarine-linux/shade/sway:${{ github.ref_name || 'main' }}
+            image: ghcr.io/ultramarine-linux/shade/sway
     uses: ./.github/workflows/reusable-build-variant.yaml
     with:
       variant_name: ${{ matrix.variant.name }}
