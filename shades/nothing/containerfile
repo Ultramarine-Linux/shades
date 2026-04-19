@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Its-J <jonah@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM ghcr.io/ultramarine-linux/desktop-bootc:main
+
+RUN --mount=type=cache,target=/var/cache dnf do -y \
+    --setopt protected_packages= \
+    --allowerasing \
+    --action=install
+
+LABEL readymade.prettyname="Ultramarine Nothing Shade"
