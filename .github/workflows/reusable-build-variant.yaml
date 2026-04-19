@@ -11,10 +11,6 @@ on:
         description: Full image repository to build and push
         required: true
         type: string
-      cache_tag:
-        description: Cache image reference
-        required: true
-        type: string
 
 env:
   CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
