@@ -63,8 +63,8 @@ jobs:
             --layers=true \
             --security-opt=label=disable \
             -t ghcr.io/ultramarine-linux/nothing-bootc:main \
-            -f nothing/containerfile \
-            nothing/
+            -f shades/nothing/containerfile \
+            .
 
       - name: Build ISO with Katsu
         run: |
