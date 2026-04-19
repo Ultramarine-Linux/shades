@@ -171,7 +171,7 @@ jobs:
           while IFS= read -r annotation; do
             [ -n "$annotation" ] || continue
             annotation=${annotation#manifest:}
-            sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
+            # sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
           done <<'EOF'
           $METADATA_ANNOTATIONS
           EOF
