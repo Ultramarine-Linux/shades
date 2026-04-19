@@ -16,6 +16,9 @@ on:
         required: true
         type: string
 
+env:
+  CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
+
 jobs:
   build:
     permissions:

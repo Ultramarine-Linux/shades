@@ -9,9 +9,6 @@ on:
   workflow_dispatch:
   push:
 
-env:
-  CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
-
 jobs:
   build:
     permissions:
