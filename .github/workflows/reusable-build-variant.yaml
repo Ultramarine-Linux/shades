@@ -102,7 +102,7 @@ jobs:
 
   manifest:
     runs-on: ubuntu-latest
-    if: "!cancelled()"
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
     needs:
       - build
     permissions:
