@@ -47,7 +47,7 @@ jobs:
 
       - name: Build and push architecture images
         run: |
-          podman build \
+          sudo podman build \
             --platform "$BUILD_PLATFORM" \
             --layers=true \
             -f "${BUILD_CONTEXT}/Containerfile" \
@@ -62,7 +62,7 @@ jobs:
         # if: github.event_name != 'pull_request'
         id: push
         run: |
-          podman push "$IMAGE_TAG"
+          sudo podman push "$IMAGE_TAG"
 
       - name: Upload matrix outputs
         uses: cloudposse/github-action-matrix-outputs-write@v1
