@@ -29,5 +29,4 @@ jobs:
     with:
       variant_name: ${{ matrix.variant.name }}
       variant_image: ${{ matrix.variant.image }}
-      cache_tag: ${{ env.CACHE_TAG }}
     secrets: inherit

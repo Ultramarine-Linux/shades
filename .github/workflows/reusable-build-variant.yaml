@@ -68,8 +68,8 @@ jobs:
           sudo podman build \
             --platform "$BUILD_PLATFORM" \
             --layers=true \
-            --cache-to "${{ inputs.cache_tag }}" \
-            --cache-from "${{ inputs.cache_tag }}" \
+            --cache-to ${{ env.CACHE_TAG }} \
+            --cache-from ${{ env.CACHE_TAG }} \
             -f "${BUILD_CONTEXT}/Containerfile" \
             -t "$FIRST_TAG" "$BUILD_CONTEXT"
 
