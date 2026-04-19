@@ -54,8 +54,6 @@ jobs:
 
       - name: Build bootc image (Nothing Shade)
         run: |
-          # test purposes
-          ls -al
           set -x
           podman build \
             --device=/dev/fuse \
@@ -65,8 +63,8 @@ jobs:
             --layers=true \
             --security-opt=label=disable \
             -t ghcr.io/ultramarine-linux/nothing-bootc:main \
-            -f containerfile \
-            .
+            -f nothing/containerfile \
+            nothing/
 
       - name: Build ISO with Katsu
         run: |
