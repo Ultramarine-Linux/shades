@@ -83,14 +83,13 @@ jobs:
 
       - name: Push to GHCR
         shell: bash
+        env:
+          METADATA_TAGS: ${{ steps.metadata.outputs.tags }}
         run: |
           while IFS= read -r tag; do
             [ -n "$tag" ] || continue
-            sudo podman tag "$IMAGE_TAG" "$tag"
             sudo podman push "$tag"
-          done <<'EOF'
-          ${{ steps.metadata.outputs.tags }}
-          EOF
+          done < <(printf '%s\n' "$METADATA_TAGS")
 
       - name: Get digest
         id: digest
@@ -171,14 +170,10 @@ jobs:
           while IFS= read -r annotation; do
             [ -n "$annotation" ] || continue
             annotation=${annotation#manifest:}
-            # sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
-          done <<'EOF'
-          $METADATA_ANNOTATIONS
-          EOF
+            #sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
+          done < <(printf '%s\n' "$METADATA_ANNOTATIONS")
 
           while IFS= read -r manifest_tag; do
             [ -n "$manifest_tag" ] || continue
             sudo podman manifest push --all "containers-storage:$FIRST_MANIFEST_TAG" "docker://$manifest_tag"
-          done <<'EOF'
-          $METADATA_TAGS
-          EOF
+          done < <(printf '%s\n' "$METADATA_TAGS")
