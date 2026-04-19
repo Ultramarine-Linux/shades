@@ -46,6 +46,10 @@ jobs:
             type=ref,event=branch,suffix=-${{ matrix.arch }}
             type=ref,event=tag,suffix=-${{ matrix.arch }}
             type=sha,suffix=-${{ matrix.arch }}
+          labels: |
+            org.opencontainers.image.title=shades
+          annotations: |
+            org.opencontainers.image.licenses="CC-BY-SA-4.0 AND GPL-3.0-or-later AND MIT"
 
       - name: Login to GitHub Container Registry
         env:
@@ -61,11 +65,16 @@ jobs:
           FIRST_TAG=$(printf '%s\n' '${{ steps.metadata.outputs.tags }}' | head -n 1)
           echo "IMAGE_TAG=$FIRST_TAG" >> "$GITHUB_ENV"
 
+          LABEL_ARGS=$(jq -r '.labels | to_entries | map("--label " + (.key | @sh) + "=" + (.value | @sh)) | join(" ")' <<< '${{ steps.metadata.outputs.json }}')
+          ANNOTATION_ARGS=$(jq -r '.annotations | map(select(startswith("manifest:") | not)) | map("--annotation " + (@sh)) | join(" ")' <<< '${{ steps.metadata.outputs.json }}')
+
           sudo podman build \
             --platform "$BUILD_PLATFORM" \
             --layers=true \
             --cache-to ${{ env.CACHE_TAG }} \
             --cache-from ${{ env.CACHE_TAG }} \
+            ${LABEL_ARGS} \
+            ${ANNOTATION_ARGS} \
             -f "${BUILD_CONTEXT}/Containerfile" \
             -t "$FIRST_TAG" "$BUILD_CONTEXT"
 
@@ -119,11 +128,15 @@ jobs:
         with:
           images: ${{ inputs.variant_image }}
           flavor: |
-            latest=false
+            latest=auto
           tags: |
             type=ref,event=branch
             type=ref,event=tag
             type=sha
+          labels: |
+            org.opencontainers.image.title=shades
+          annotations: |
+            org.opencontainers.image.licenses="CC-BY-SA-4.0 AND GPL-3.0-or-later AND MIT"
 
       - name: Debug matrix outputs
         shell: bash
@@ -150,9 +163,17 @@ jobs:
           sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$AMD64_IMAGE"
           sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$ARM64_IMAGE"
 
+          while IFS= read -r annotation; do
+            [ -n "$annotation" ] || continue
+            annotation=${annotation#manifest:}
+            sudo podman manifest annotate --annotation "$annotation" --index "$FIRST_MANIFEST_TAG"
+          done <<'EOF'
+          ${{ steps.metadata.outputs.annotations }}
+          EOF
+
           while IFS= read -r manifest_tag; do
             [ -n "$manifest_tag" ] || continue
-            sudo podman manifest push --all "$FIRST_MANIFEST_TAG" "docker://$manifest_tag"
+            sudo podman manifest push --all "containers-storage:$FIRST_MANIFEST_TAG" "docker://$manifest_tag"
           done <<'EOF'
           ${{ steps.metadata.outputs.tags }}
           EOF
