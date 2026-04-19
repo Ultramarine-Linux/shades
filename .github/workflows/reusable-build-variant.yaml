@@ -136,8 +136,6 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha
-          labels: |
-            org.opencontainers.image.title=shades
           annotations: |
             org.opencontainers.image.licenses="CC-BY-SA-4.0 AND GPL-3.0-or-later AND MIT"
 
