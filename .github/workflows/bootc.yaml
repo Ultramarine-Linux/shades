@@ -19,10 +19,10 @@ jobs:
         variant:
           - name: nothing
             image: ghcr.io/ultramarine-linux/shade/nothing:${{ github.ref_name || 'main' }}
-          - name: cinnamon
-            image: ghcr.io/ultramarine-linux/shade/cinnamon:${{ github.ref_name || 'main' }}
-          - name: sway
-            image: ghcr.io/ultramarine-linux/shade/sway:${{ github.ref_name || 'main' }}
+          # - name: cinnamon
+          #   image: ghcr.io/ultramarine-linux/shade/cinnamon:${{ github.ref_name || 'main' }}
+          # - name: sway
+          #   image: ghcr.io/ultramarine-linux/shade/sway:${{ github.ref_name || 'main' }}
 
     runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
 
@@ -60,7 +60,7 @@ jobs:
 
       - name: Get digest
         run: |
-          DIGEST=$(podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
+          DIGEST=$(sudo podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
           echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
       - name: Push to GHCR
