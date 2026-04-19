@@ -1,0 +1,159 @@
+name: Build Image
+
+on:
+  workflow_call:
+    inputs:
+      variant_name:
+        description: Variant name used to locate the build context
+        required: true
+        type: string
+      variant_image:
+        description: Full image repository to build and push
+        required: true
+        type: string
+      cache_tag:
+        description: Cache image reference
+        required: true
+        type: string
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+    runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+
+    env:
+      BUILD_PLATFORM: ${{ contains(matrix.arch, 'aarch64') && 'linux/arm64' || 'linux/amd64' }}
+      BUILD_CONTEXT: shades/${{ inputs.variant_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Image Metadata
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
+        id: metadata
+        with:
+          images: ${{ inputs.variant_image }}
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=branch,suffix=-${{ matrix.arch }}
+            type=ref,event=tag,suffix=-${{ matrix.arch }}
+            type=sha,suffix=-${{ matrix.arch }}
+
+      - name: Login to GitHub Container Registry
+        env:
+          registry: ghcr.io
+        shell: bash
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login -u "${{ github.actor }}" --password-stdin "$registry"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin "$registry"
+
+      - name: Build architecture image
+        shell: bash
+        run: |
+          FIRST_TAG=$(printf '%s\n' '${{ steps.metadata.outputs.tags }}' | head -n 1)
+          echo "IMAGE_TAG=$FIRST_TAG" >> "$GITHUB_ENV"
+
+          sudo podman build \
+            --platform "$BUILD_PLATFORM" \
+            --layers=true \
+            --cache-to "${{ inputs.cache_tag }}" \
+            --cache-from "${{ inputs.cache_tag }}" \
+            -f "${BUILD_CONTEXT}/Containerfile" \
+            -t "$FIRST_TAG" "$BUILD_CONTEXT"
+
+      - name: Push to GHCR
+        shell: bash
+        run: |
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            sudo podman tag "$IMAGE_TAG" "$tag"
+            sudo podman push "$tag"
+          done <<'EOF'
+          ${{ steps.metadata.outputs.tags }}
+          EOF
+
+      - name: Get digest
+        id: digest
+        shell: bash
+        run: |
+          DIGEST=$(sudo podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+
+      - name: Upload matrix outputs
+        uses: cloudposse/github-action-matrix-outputs-write@v1
+        with:
+          matrix-step-name: build
+          matrix-key: ${{ matrix.arch }}
+          outputs: |-
+            digest: ${{ steps.digest.outputs.digest }}
+            image: ${{ env.IMAGE_TAG }}
+
+  manifest:
+    runs-on: ubuntu-latest
+    if: "!cancelled()"
+    needs:
+      - build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Read matrix outputs
+        uses: cloudposse/github-action-matrix-outputs-read@33cac12fa9282a7230a418d859b93fdbc4f27b5a
+        id: read
+        with:
+          matrix-step-name: build
+
+      - name: Image Metadata
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
+        id: metadata
+        with:
+          images: ${{ inputs.variant_image }}
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha
+
+      - name: Debug matrix outputs
+        shell: bash
+        run: |
+          echo '${{ steps.read.outputs.result }}' | jq
+
+      - name: Login to GitHub Container Registry
+        env:
+          registry: ghcr.io
+        shell: bash
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login -u "${{ github.actor }}" --password-stdin "$registry"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin "$registry"
+
+      - name: Create and push merged manifest
+        shell: bash
+        run: |
+          AMD64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.x86_64.image')
+          ARM64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.aarch64.image')
+          FIRST_MANIFEST_TAG=$(printf '%s\n' '${{ steps.metadata.outputs.tags }}' | head -n 1)
+
+          sudo podman manifest rm "$FIRST_MANIFEST_TAG" || true
+          sudo podman manifest create "$FIRST_MANIFEST_TAG"
+          sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$AMD64_IMAGE"
+          sudo podman manifest add "$FIRST_MANIFEST_TAG" "docker://$ARM64_IMAGE"
+
+          while IFS= read -r manifest_tag; do
+            [ -n "$manifest_tag" ] || continue
+            sudo podman manifest push --all "$FIRST_MANIFEST_TAG" "docker://$manifest_tag"
+          done <<'EOF'
+          ${{ steps.metadata.outputs.tags }}
+          EOF

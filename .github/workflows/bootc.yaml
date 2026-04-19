@@ -21,7 +21,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64, aarch64]
         variant:
           - name: nothing
             image: ghcr.io/ultramarine-linux/shade/nothing
@@ -29,92 +28,9 @@ jobs:
           #   image: ghcr.io/ultramarine-linux/shade/cinnamon:${{ github.ref_name || 'main' }}
           # - name: sway
           #   image: ghcr.io/ultramarine-linux/shade/sway:${{ github.ref_name || 'main' }}
-
-    runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
-
-    env:
-      # set build platform for OCI
-      BUILD_PLATFORM: ${{ contains(matrix.arch, 'aarch64') && 'linux/arm64' || 'linux/amd64' }}
-      # IMAGE_TAG: "${{ matrix.variant.image }}-${{ matrix.arch }}"
-      REF_TAG: "${{ github.ref_name || 'main' }}"
-      BUILD_CONTEXT: "shades/${{ matrix.variant.name }}"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-
-      - name: Sanitize image tag
-        run: |
-          TAG=$(echo "$REF_TAG-${{ matrix.arch }}" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
-          echo "IMAGE_TAG=${{ matrix.variant.image }}:$TAG" >> $GITHUB_ENV
-
-      - name: Login to GitHub Container Registry
-        # if: github.event_name != 'pull_request'
-        env:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | sudo podman login -u ${{ github.actor }} --password-stdin $registry
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ github.actor }} --password-stdin $registry
-
-      - name: Build and push architecture images
-        run: |
-          sudo podman build \
-            --platform "$BUILD_PLATFORM" \
-            --layers=true \
-            --cache-to $CACHE_TAG \
-            --cache-from $CACHE_TAG \
-            -f "${BUILD_CONTEXT}/Containerfile" \
-            -t "$IMAGE_TAG" "$BUILD_CONTEXT"
-
-
-      - name: Push to GHCR
-        # if: github.event_name != 'pull_request'
-        id: push
-        run: |
-          sudo podman push "$IMAGE_TAG"
-
-      - name: Get digest
-        id: digest
-        run: |
-          DIGEST=$(sudo podman inspect --format '{{.Digest}}' "$IMAGE_TAG")
-          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
-
-      - name: Upload matrix outputs
-        uses: cloudposse/github-action-matrix-outputs-write@v1
-        id: out
-        with:
-          matrix-step-name: ${{ github.job }}
-          matrix-key: ${{ matrix.variant.name }}
-          outputs: |-
-            digest: ${{ steps.digest.outputs.digest }}
-            image: ${{ env.IMAGE_TAG }}
-            manifest: "${{ needs.manifest.outputs.manifest }}"
-
-  manifest:
-    runs-on: ubuntu-latest
-    if: "!cancelled()"
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    needs:
-      - build
-
-    steps:
-      - uses: cloudposse/github-action-matrix-outputs-read@33cac12fa9282a7230a418d859b93fdbc4f27b5a
-        id: read
-        with:
-          matrix-step-name: build
-
-      - name: Debug outputs
-        run: echo '${{ steps.read.outputs.result }}'
-
-      - name: Image Metadata
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
-        id: metadata
-        with:
-          tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=sha
+    uses: ./.github/workflows/reusable-build-variant.yaml
+    with:
+      variant_name: ${{ matrix.variant.name }}
+      variant_image: ${{ matrix.variant.image }}
+      cache_tag: ${{ env.CACHE_TAG }}
+    secrets: inherit
