@@ -88,7 +88,7 @@ jobs:
           echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
 
       - name: Upload matrix outputs
-        uses: cloudposse/github-action-matrix-outputs-write@v1
+        uses: cloudposse/github-action-matrix-outputs-write@ed06cf3a6bf23b8dce36d1cf0d63123885bb8375
         with:
           matrix-step-name: build
           matrix-key: ${{ matrix.arch }}
@@ -141,8 +141,8 @@ jobs:
       - name: Create and push merged manifest
         shell: bash
         run: |
-          AMD64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.x86_64.image')
-          ARM64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.aarch64.image')
+          AMD64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.image.x86_64')
+          ARM64_IMAGE=$(echo '${{ steps.read.outputs.result }}' | jq -r '.image.aarch64')
           FIRST_MANIFEST_TAG=$(printf '%s\n' '${{ steps.metadata.outputs.tags }}' | head -n 1)
 
           sudo podman manifest rm "$FIRST_MANIFEST_TAG" || true
