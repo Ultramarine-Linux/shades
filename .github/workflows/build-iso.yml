@@ -1,23 +1,26 @@
-name: Build Ultramarine Nothing Shade ISO
+name: Build ISO images with katsu
 permissions: write-all
-
 on:
-  pull_request:
-  workflow_dispatch:
   schedule:
-    - cron: "0 4 * * *" # daily at 4am UTC
-
+    - cron: "0 4 * * *" # every day at 4am UTC
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build bootc images"]
+    types:
+      - completed
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   build-iso:
     strategy:
       fail-fast: false
       matrix:
         arch: [x86_64, aarch64]
-
+        variant:
+          - name: nothing
+            image: ghcr.io/ultramarine-linux/nothing-bootc:${{ github.ref_name || 'main' }} 
+    name: Build ISO images with katsu
     runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
 
     container:
@@ -25,9 +28,8 @@ jobs:
       options: --privileged --security-opt seccomp=unconfined -v /usr:/hostusr -v /:/hostfs
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Clean up space before build
         run: |
           df -h
@@ -47,32 +49,17 @@ jobs:
           echo "After cleanup:"
           df -h
       - name: Install dependencies
-        run: dnf install -y just podman
-
-      - name: Build bootc image (Nothing Shade)
+        run: |
+          dnf install -y just
+      - name: Build ISO
         run: |
           set -x
-          podman build \
-            --device=/dev/fuse \
-            --cap-add=all \
-            --userns=host \
-            --cgroupns=host \
-            --layers=true \
-            --security-opt=label=disable \
-            -t ghcr.io/ultramarine-linux/nothing-bootc:main \
-            -f shades/nothing/containerfile \
-            .
-
-      - name: Build ISO with Katsu
-        run: |
-          set -x
-          just image_tag=ghcr.io/ultramarine-linux/nothing-bootc:main katsu-live
-          mv iso out-${{ matrix.arch }}.iso
-
-      - name: Upload ISO artifact
+          just image_tag=${{ matrix.variant.image }} katsu-live
+          mv out.iso ./${{ matrix.variant.name }}-${{ matrix.arch }}.iso
+      - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ultramarine-nothing-${{ matrix.arch }}-${{ github.run_id }}
+          name: iso-artifact-${{ github.run_id }}-${{ matrix.variant.name }}-${{ matrix.arch }}
           path: ./*.iso
           archive: false
           compression-level: 0
