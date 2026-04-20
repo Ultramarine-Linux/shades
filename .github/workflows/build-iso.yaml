@@ -68,6 +68,8 @@ jobs:
           # set -x prints all commands to terminal
           set -x
 
+          echo "debug: variant name: ${{ inputs.variant_name }}"
+
           # make output directory and copy katsu manifest template there
           mkdir -p output/
           cp -r katsu-template/ output/katsu-live/
