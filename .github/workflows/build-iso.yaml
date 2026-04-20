@@ -73,7 +73,8 @@ jobs:
           cp -r katsu-template/ output/katsu-live/
 
           # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
-          sed -i "s|%BASE_IMAGE%|{{ image_tag }}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
+          IMAGE_NAME="{{ inputs.variant_name }}"
+          sed -i "s|%BASE_IMAGE%|${IMAGE_NAME}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
 
           # build the live ISO using katsu
           katsu -o iso output/katsu-live/bootc-live.yaml
