@@ -14,26 +14,27 @@ on:
   push:
 
 jobs:
-  build:
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        variant: # add new shade variants here
-          - name: nothing
-            image: ghcr.io/ultramarine-linux/shade/nothing
-          # - name: cinnamon
-          #   image: ghcr.io/ultramarine-linux/shade/cinnamon
-          # - name: sway
-          #   image: ghcr.io/ultramarine-linux/shade/sway
-    uses: ./.github/workflows/reusable-build-variant.yaml
-    with:
-      variant_name: ${{ matrix.variant.name }}
-      variant_image: ${{ matrix.variant.image }}
-    secrets: inherit
+  # temporarily disable to test iso builds faster
+  # build:
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     id-token: write
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       variant: # add new shade variants here
+  #         - name: nothing
+  #           image: ghcr.io/ultramarine-linux/shade/nothing
+  #         # - name: cinnamon
+  #         #   image: ghcr.io/ultramarine-linux/shade/cinnamon
+  #         # - name: sway
+  #         #   image: ghcr.io/ultramarine-linux/shade/sway
+  #   uses: ./.github/workflows/reusable-build-variant.yaml
+  #   with:
+  #     variant_name: ${{ matrix.variant.name }}
+  #     variant_image: ${{ matrix.variant.image }}
+  #   secrets: inherit
 
   iso:
     permissions:
