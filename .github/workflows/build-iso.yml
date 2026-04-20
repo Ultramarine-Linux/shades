@@ -8,10 +8,11 @@ on:
   schedule:
     - cron: "0 4 * * *" # every day at 4am UTC
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Build Image"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Build bootc images"]
+  #   types:
+  #     - completed
+  push:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
@@ -19,10 +20,6 @@ concurrency:
 
 jobs:
   build-iso:
-    # idk if this needs this instead of write-all at the top
-    # permissions:
-    #   contents: write
-    #   packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -30,6 +27,7 @@ jobs:
         variant:
           - name: nothing
             image: ghcr.io/ultramarine-linux/nothing-bootc:${{ github.ref_name || 'main' }}
+
     name: Build ISO images with katsu
     runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
 
@@ -60,12 +58,6 @@ jobs:
           echo "After cleanup:"
           df -h
 
-      # - name: Install dependencies
-      #   run: |
-      #    dnf install -y just
-
-      # Dont need just? Maybe just make it run the katsu thing here directly? Shouldnt be as complex as the bootc workflow?
-      #
       - name: Build live ISO with Katsu
         run: |
           # set -x prints all commands to terminal
