@@ -17,14 +17,16 @@ on:
         type: string
     outputs:
       image:
-        description: Image tag
-        value: ${{ env.IMAGE_TAG }}
+        description: Full image name including tag
+        value: ${{ jobs.build.outputs.image }}
 
 env:
   CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
 
 jobs:
   build:
+    outputs:
+      image: ${{ env.IMAGE_TAG }}
     permissions:
       contents: read
       packages: write
