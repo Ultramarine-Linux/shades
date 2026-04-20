@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Its-J <@jonah@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 name: Build ISO images with katsu
 permissions: write-all
 on:
@@ -8,9 +12,11 @@ on:
     workflows: ["Build bootc images"]
     types:
       - completed
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
+
 jobs:
   build-iso:
     strategy:
@@ -19,7 +25,7 @@ jobs:
         arch: [x86_64, aarch64]
         variant:
           - name: nothing
-            image: ghcr.io/ultramarine-linux/nothing-bootc:${{ github.ref_name || 'main' }} 
+            image: ghcr.io/ultramarine-linux/nothing-bootc:${{ github.ref_name || 'main' }}
     name: Build ISO images with katsu
     runs-on: ${{ contains(matrix.arch, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
 
@@ -30,6 +36,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
       - name: Clean up space before build
         run: |
           df -h
@@ -48,14 +55,31 @@ jobs:
 
           echo "After cleanup:"
           df -h
-      - name: Install dependencies
+
+      # - name: Install dependencies
+      #   run: |
+      #    dnf install -y just
+
+      # Dont need just? Maybe just make it run the katsu thing here directly? Shouldnt be as complex as the bootc workflow?
+      #
+      - name: Build live ISO with Katsu
         run: |
-          dnf install -y just
-      - name: Build ISO
-        run: |
+          # set -x prints all commands to terminal
           set -x
-          just image_tag=${{ matrix.variant.image }} katsu-live
+
+          # make output directory and copy katsu manifest template there
+          mkdir -p output/
+          cp katsu-template/bootc-live.yaml output/katsu-live/
+
+          # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
+          sed -i "s|%BASE_IMAGE%|{{ image_tag }}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
+
+          # build the live ISO using katsu
+          katsu -o iso output/katsu-live/bootc-live.yaml
+
+          # move the built ISO to the output directory
           mv out.iso ./${{ matrix.variant.name }}-${{ matrix.arch }}.iso
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
