@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2025 Owen Zimmerman <owen@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: REUSE linting
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    container:
+      image: docker.io/fedora:43
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf in -y reuse
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check REUSE
+        run: |
+          reuse lint

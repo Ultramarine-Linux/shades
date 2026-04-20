@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Cappy Ishihara <@cappy@fyralabs.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 name: Build bootc images
 permissions:
   contents: read
@@ -18,14 +22,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant:
+        variant: # add new shade variants here
           - name: nothing
             image: ghcr.io/ultramarine-linux/shade/nothing
-          - name: cinnamon
-            image: ghcr.io/ultramarine-linux/shade/cinnamon
-          - name: sway
-            image: ghcr.io/ultramarine-linux/shade/sway
+          # - name: cinnamon
+          #   image: ghcr.io/ultramarine-linux/shade/cinnamon
+          # - name: sway
+          #   image: ghcr.io/ultramarine-linux/shade/sway
     uses: ./.github/workflows/reusable-build-variant.yaml
+    with:
+      variant_name: ${{ matrix.variant.name }}
+      variant_image: ${{ matrix.variant.image }}
+    secrets: inherit
+
+  iso:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    needs: build # wait for build job to complete before running iso job
+    uses: ./.github/workflows/build-iso.yaml
     with:
       variant_name: ${{ matrix.variant.name }}
       variant_image: ${{ matrix.variant.image }}
