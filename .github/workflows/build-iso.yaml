@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 name: Build ISO images with katsu
-permissions: write-all
+
 on:
   # schedule:
   #   - cron: "0 4 * * *" # every day at 4am UTC
