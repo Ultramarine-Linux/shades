@@ -51,7 +51,7 @@ jobs:
           #   image: ghcr.io/ultramarine-linux/shade/cinnamon
           # - name: sway
           #   image: ghcr.io/ultramarine-linux/shade/sway
-    # needs: build # wait for build job to complete before running iso job
+    needs: build # wait for build job to complete before running iso job
     uses: ./.github/workflows/build-iso.yaml
     with:
       variant_name: ${{ matrix.variant.name }}
