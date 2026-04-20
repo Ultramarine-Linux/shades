@@ -75,14 +75,14 @@ jobs:
           # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
           # %BASE_IMAGE needs to look something like ghcr.io/ultramarine-linux/shade/nothing:sha-acc8f20
           # ghcr.io/ultramarine-linux/shade/nothing is the variant_image and :sha-acc8f20 is the tag
-          IMAGE_NAME="{{ inputs.matrix.variant_image }}"
+          IMAGE_NAME="{{ inputs.variant_image }}"
           sed -i "s|%BASE_IMAGE%|${IMAGE_NAME}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
 
           # build the live ISO using katsu
           katsu -o iso output/katsu-live/bootc-live.yaml
 
           # move the built ISO to the output directory
-          mv out.iso ./${{ inputs.matrix.variant_name }}-${{ matrix.arch }}.iso
+          mv out.iso ./${{ inputs.variant_name }}-${{ matrix.arch }}.iso
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
