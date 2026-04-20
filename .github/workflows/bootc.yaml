@@ -41,7 +41,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    needs: build # wait for build job to complete before running iso job
+    # needs: build # wait for build job to complete before running iso job
     uses: ./.github/workflows/build-iso.yaml
     with:
       variant_name: ${{ matrix.variant.name }}
