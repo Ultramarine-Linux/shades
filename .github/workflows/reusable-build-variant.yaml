@@ -15,6 +15,10 @@ on:
         description: Full image repository to build and push
         required: true
         type: string
+    outputs:
+      image:
+        description: Image tag
+        value: ${{ env.IMAGE_TAG }}
 
 env:
   CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache

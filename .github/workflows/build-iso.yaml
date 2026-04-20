@@ -17,11 +17,15 @@ on:
         description: Full image repository to build and push
         required: true
         type: string
+      image_tag:
+        description: Tag of the image to build
+        required: true
+        type: string
 
 # Cancel in-progress builds when a new run is queued
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-#   cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-iso:
@@ -63,12 +67,21 @@ jobs:
           echo "After cleanup:"
           df -h
 
+      - name: Login to GitHub Container Registry
+        env:
+          registry: ghcr.io
+        shell: bash
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login -u "${{ github.actor }}" --password-stdin "$registry"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin "$registry"
+
       - name: Build live ISO with Katsu
         run: |
           # set -x prints all commands to terminal
           set -x
 
           echo "debug: variant_image: ${{ inputs.variant_image }}"
+          echo "debug: image_tag: ${{ inputs.image_tag }}"
 
           # make output directory and copy katsu manifest template there
           mkdir -p output/
@@ -76,14 +89,17 @@ jobs:
 
           # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
           # %BASE_IMAGE needs to look something like ghcr.io/ultramarine-linux/shade/nothing:sha-acc8f20
-          # ghcr.io/ultramarine-linux/shade/nothing is the variant_image and :sha-acc8f20 is the tag
-          IMAGE_NAME=${{ inputs.variant_image }}:main
+          # ghcr.io/ultramarine-linux/shade/nothing is the variant_image and :main is the tag
+          IMAGE_NAME=${{ inputs.variant_image }}:${{ inputs.image_tag }}
+
+          echo "debug: IMAGE_NAME=${IMAGE_NAME}"
+
           sed -i "s|%BASE_IMAGE%|${IMAGE_NAME}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
 
-          # build the live ISO using katsu
+          # build the live ISO using katsu with the generated manifest
           katsu -o iso output/katsu-live/bootc-live.yaml
 
-          # move the built ISO to the output directory
+          # rename the built ISO to include variant name and architecture
           mv out.iso ./${{ inputs.variant_name }}-${{ matrix.arch }}.iso
 
       - name: Upload artifact
