@@ -68,6 +68,8 @@ jobs:
           # set -x prints all commands to terminal
           set -x
 
+          echo "debug: variant_image: ${{ inputs.variant_image }}"
+
           # make output directory and copy katsu manifest template there
           mkdir -p output/
           cp -r katsu-template/ output/katsu-live/
@@ -75,7 +77,7 @@ jobs:
           # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
           # %BASE_IMAGE needs to look something like ghcr.io/ultramarine-linux/shade/nothing:sha-acc8f20
           # ghcr.io/ultramarine-linux/shade/nothing is the variant_image and :sha-acc8f20 is the tag
-          IMAGE_NAME="{{ inputs.variant_image }}"
+          IMAGE_NAME="{{ inputs.variant_image }}:main"
           sed -i "s|%BASE_IMAGE%|${IMAGE_NAME}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
 
           # build the live ISO using katsu
