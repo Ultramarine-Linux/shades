@@ -70,7 +70,7 @@ jobs:
 
           # make output directory and copy katsu manifest template there
           mkdir -p output/
-          cp katsu-template/bootc-live.yaml output/katsu-live/bootc-live.yaml
+          cp -r katsu-template/ output/katsu-live/
 
           # replace %BASE_IMAGE with the actual image name in bootc-live.yaml manifest
           sed -i "s|%BASE_IMAGE%|{{ image_tag }}|g" output/katsu-live/bootc-live.yaml # makes katsu manifest
