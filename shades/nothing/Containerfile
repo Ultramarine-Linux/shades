@@ -11,5 +11,6 @@ RUN --mount=type=cache,target=/var/cache dnf do -y \
     --setopt protected_packages= \
     --allowerasing \
     --action=install
+    # needs release identity
 
 LABEL readymade.prettyname="Ultramarine Nothing Shade"

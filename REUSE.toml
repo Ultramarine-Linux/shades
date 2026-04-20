@@ -1,0 +1,21 @@
+version = 1
+
+[[annotations]]
+path = ["README.md", "katsu/modules/base/*.md"]
+SPDX-FileCopyrightText = "Ultramarine Linux Team"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = ["katsu/modules/base/repodir/*.repo", "katsu/modules/base/*.yaml", "katsu/modules/base/*.sh", "katsu/modules/live/*.yaml", "katsu/modules/live/*.sh"]
+SPDX-FileCopyrightText = "Ultramarine Linux Team"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["anda/release/*"]
+SPDX-FileCopyrightText = "2025 Owen Zimmerman <owen@fyralabs.com>"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["katsu/modules/desktop-shade/*.yaml"]
+SPDX-FileCopyrightText = "2025 Owen Zimmerman <owen@fyralabs.com>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
