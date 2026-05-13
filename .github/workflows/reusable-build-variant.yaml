@@ -19,6 +19,9 @@ on:
       image:
         description: Full image name including tag
         value: ${{ jobs.build.outputs.image }}
+      image_tag:
+        description: Just the tag portion of the built manifest image
+        value: ${{ jobs.manifest.outputs.image_tag }}
 
 env:
   CACHE_TAG: ghcr.io/ultramarine-linux/shade/cache
@@ -119,6 +122,8 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    outputs:
+      image_tag: ${{ steps.extract-tag.outputs.image_tag }}
 
     steps:
       - name: Read matrix outputs
@@ -153,6 +158,17 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login -u "${{ github.actor }}" --password-stdin "$registry"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin "$registry"
+
+      - name: Extract image tag
+        id: extract-tag
+        shell: bash
+        env:
+          METADATA_TAGS: ${{ steps.metadata.outputs.tags }}
+        run: |
+          FIRST_TAG=$(printf '%s\n' "$METADATA_TAGS" | head -n 1)
+          # Strip the image name, keep only the tag
+          IMAGE_TAG="${FIRST_TAG##*:}"
+          echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create and push merged manifest
         shell: bash

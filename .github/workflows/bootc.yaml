@@ -56,5 +56,5 @@ jobs:
     with:
       variant_name: ${{ matrix.variant.name }}
       variant_image: ${{ matrix.variant.image }}
-      image_tag: ${{ needs.build.outputs.image_tag }}
+      image_tag: ${{ needs.build.outputs.image_tag }} # output from reusable-build-variant.yaml's manifest job
     secrets: inherit
